@@ -42,6 +42,7 @@ func checkPostcode(postcode string) (string, error) {
 	if p {
 		return postcode, nil
 	}
+	//returns lat long
 	return postcode, errors.New("incorrect postcode")
 }
 
@@ -53,7 +54,7 @@ func readFile(file string) []byte {
 
 func desrializePostcode(file []byte) map[string][]float64 {
 	b := bytes.NewBuffer(file)
-	var postcodes map[string][]float64
+	postcodes := make(map[string][]float64)
 	dec := gob.NewDecoder(b)
 	if err := dec.Decode(&postcodes); err != nil {
 		fmt.Println("Error decoding struct:", err)
