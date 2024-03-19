@@ -12,27 +12,28 @@ import (
 )
 
 // figure out how to create a module
-// figure out best practice for initialisation and have functions others can call
+func main() {
 
-func init() {
-
-	//go: embed content
-	content := desrializePostcode(readFile("content"))
-	p := "GL51 xh"
-	r, err := FindLatLong(p, content)
-	if err != nil {
-		fmt.Printf("error")
-	} else {
-		fmt.Println(r)
-	}
+	p := Postcodes{}
+	p.Initialise()
+	r, _ := p.Search("GL51 3xh")
+	fmt.Println(r)
 }
 
-func FindLatLong(postcode string, list map[string][]float64) ([]float64, error) {
+type Postcodes struct {
+	data map[string][]float64
+}
+
+func (p *Postcodes) Initialise() {
+	p.data = desrializePostcode(readFile("content"))
+}
+
+func (p *Postcodes) Search(postcode string) ([]float64, error) {
 	postcode, err := checkPostcode(postcode)
 	if err != nil {
 		fmt.Printf("string %s is incorrect\n", postcode)
 	}
-	return list[postcode], err
+	return p.data[postcode], err
 }
 
 func checkPostcode(postcode string) (string, error) {
@@ -51,8 +52,6 @@ func readFile(file string) []byte {
 }
 
 func desrializePostcode(file []byte) map[string][]float64 {
-
-	//return the file of bytes here!!! //
 	b := bytes.NewBuffer(file)
 	var postcodes map[string][]float64
 	dec := gob.NewDecoder(b)
