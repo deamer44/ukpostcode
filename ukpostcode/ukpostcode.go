@@ -5,26 +5,32 @@ import (
 	"embed"
 	_ "embed"
 	"encoding/gob"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"regexp"
 	"strings"
 )
 
-type Postcodes struct {
+type PostcodeList struct {
 	data map[string][]float64
 }
 
-func (p *Postcodes) Initialise() {
+type Postcode struct {
+	Lat  float64
+	Long float64
+}
+
+func (p *PostcodeList) Initialise() {
 	p.data = desrializePostcode(readData("content"))
 }
 
-func (p *Postcodes) Search(postcode string) ([]float64, error) {
+func (p *PostcodeList) Search(postcode string) ([]byte, error) {
 	postcode, err := checkPostcode(postcode)
 	if err != nil {
 		fmt.Printf("string %s is incorrect\n", postcode)
 	}
-	return p.data[postcode], err
+	return returnJson(p.data[postcode]), err
 }
 
 func checkPostcode(postcode string) (string, error) {
@@ -48,13 +54,20 @@ func readData(file string) []byte {
 
 func desrializePostcode(file []byte) map[string][]float64 {
 	b := bytes.NewBuffer(file)
-	postcodes := make(map[string][]float64)
+	PostcodeList := make(map[string][]float64)
 	dec := gob.NewDecoder(b)
-	if err := dec.Decode(&postcodes); err != nil {
+	if err := dec.Decode(&PostcodeList); err != nil {
 		fmt.Println("Error decoding struct:", err)
 		return make(map[string][]float64)
 	}
-	return postcodes
+	return PostcodeList
+}
+
+func returnJson(c []float64) []byte {
+	p := Postcode{Lat: c[0], Long: c[1]}
+	json, err := json.Marshal(p)
+	check(err)
+	return json
 }
 
 func check(e error) {
