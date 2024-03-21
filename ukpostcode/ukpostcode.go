@@ -2,30 +2,21 @@ package ukpostcode
 
 import (
 	"bytes"
+	"embed"
 	_ "embed"
 	"encoding/gob"
 	"errors"
 	"fmt"
-	"os"
 	"regexp"
 	"strings"
 )
-
-// figure out how to create a module
-func main() {
-
-	p := Postcodes{}
-	p.Initialise()
-	r, _ := p.Search("GL51 3xh")
-	fmt.Println(r)
-}
 
 type Postcodes struct {
 	data map[string][]float64
 }
 
 func (p *Postcodes) Initialise() {
-	p.data = desrializePostcode(readFile("content"))
+	p.data = desrializePostcode(readData("content"))
 }
 
 func (p *Postcodes) Search(postcode string) ([]float64, error) {
@@ -46,8 +37,11 @@ func checkPostcode(postcode string) (string, error) {
 	return postcode, errors.New("incorrect postcode")
 }
 
-func readFile(file string) []byte {
-	data, err := os.ReadFile(file)
+//go:embed content
+var content embed.FS
+
+func readData(file string) []byte {
+	data, err := content.ReadFile(file)
 	check(err)
 	return data
 }
