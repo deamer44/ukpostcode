@@ -21,6 +21,9 @@ type Postcode struct {
 	Long float64
 }
 
+//go:embed content
+var content embed.FS
+
 func (p *PostcodeList) Initialise() {
 	p.data = desrializePostcode(readData("content"))
 }
@@ -44,10 +47,8 @@ func CheckPostcode(postcode string) (string, error) {
 	return postcode, errors.New("incorrect postcode")
 }
 
-//go:embed content
-var content embed.FS
-
 func readData(file string) []byte {
+	//reads data from content embed.FS, which was created from create_serialised_data.go
 	data, err := content.ReadFile(file)
 	check(err)
 	return data

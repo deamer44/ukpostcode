@@ -7,6 +7,13 @@ import (
 	"ukpostcode/ukpostcode"
 )
 
+func main() {
+	//can HandleFunc pass in reference to postcodelist
+	http.HandleFunc("/postcode", handlePostcode)
+	fmt.Println("Server listening on port 8080")
+	http.ListenAndServe(":8080", nil)
+}
+
 func handlePostcode(w http.ResponseWriter, r *http.Request) {
 
 	p := ukpostcode.PostcodeList{}
@@ -41,11 +48,4 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(latLong)
-}
-
-func main() {
-	//can HandleFunc pass in reference to postcodelist
-	http.HandleFunc("/postcode", handlePostcode)
-	fmt.Println("Server listening on port 8080")
-	http.ListenAndServe(":8080", nil)
 }

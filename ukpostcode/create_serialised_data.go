@@ -9,10 +9,9 @@ import (
 	"strconv"
 )
 
-// figure out how to create a module
-// figure out best practice for initialisation and have functions others can call
-
 func main_create() {
+
+	//ukpostcodes retrieved from https://data.freemaptools.com/download/full-uk-postcodes/ukpostcodes.zip
 	postcodes := readFromCsv("../ukpostcodes.csv")
 	writeFile(serializePostcode(postcodes))
 }
