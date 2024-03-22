@@ -8,7 +8,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strings"
 )
@@ -22,10 +21,6 @@ type Postcode struct {
 	Long float64
 }
 
-func (p *Postcode) len() int {
-	return reflect.TypeOf(p).NumField()
-}
-
 func (p *PostcodeList) Initialise() {
 	p.data = desrializePostcode(readData("content"))
 }
@@ -34,11 +29,12 @@ func (p *PostcodeList) Search(postcode string) (Postcode, error) {
 	postcode, err := checkPostcode(postcode)
 	if err != nil {
 		fmt.Printf("string %s is incorrect\n", postcode)
+		return Postcode{}, err
 	}
-	return returnJson(p.data[postcode])
+	return Postcode{Lat: p.data[postcode][0], Long: p.data[postcode][1]}, err
 }
 
-func checkPostcode(postcode string) (string, error) {
+func CheckPostcode(postcode string) (string, error) {
 	postcode = strings.ToUpper(postcode)
 	p := regexp.MustCompile("^([Gg][Ii][Rr] 0[Aa]{2})|((([A-Za-z][0-9]{1,2})|(([A-Za-z][A-Ha-hJ-Yj-y][0-9]{1,2})|(([AZa-z][0-9][A-Za-z])|([A-Za-z][A-Ha-hJ-Yj-y][0-9]?[A-Za-z])))) [0-9][A-Za-z]{2})$").MatchString(postcode)
 	if p {
@@ -68,11 +64,10 @@ func desrializePostcode(file []byte) map[string][]float64 {
 	return PostcodeList
 }
 
-func returnJson(c []float64) []byte {
-	p := Postcode{Lat: c[0], Long: c[1]}
+func (p *Postcode) Print() string {
 	json, err := json.Marshal(p)
 	check(err)
-	return json
+	return string(json)
 }
 
 func check(e error) {

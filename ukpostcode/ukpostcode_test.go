@@ -17,15 +17,9 @@ func TestLookup(t *testing.T) {
 
 // test length
 
-func compare2FloatLiterals(f1 Postcode, f2 Postcode) bool {
-	if len(f1) != len(f2) {
-		return false
+func compare2FloatLiterals(p1 Postcode, p2 Postcode) bool {
+	if p1.Lat == p2.Lat && p1.Long == p2.Long {
+		return true
 	}
-	for i, e := range f1 {
-		if e == f2[i] {
-		} else {
-			return false
-		}
-	}
-	return true
+	return false
 }
