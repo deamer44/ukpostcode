@@ -26,7 +26,7 @@ func (p *PostcodeList) Initialise() {
 }
 
 func (p *PostcodeList) Search(postcode string) (Postcode, error) {
-	postcode, err := checkPostcode(postcode)
+	postcode, err := CheckPostcode(postcode)
 	if err != nil {
 		fmt.Printf("string %s is incorrect\n", postcode)
 		return Postcode{}, err

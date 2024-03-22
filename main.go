@@ -8,6 +8,10 @@ import (
 )
 
 func handlePostcode(w http.ResponseWriter, r *http.Request) {
+
+	p := ukpostcode.PostcodeList{}
+	p.Initialise()
+
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		fmt.Fprintf(w, "Only GET method allowed")
@@ -28,7 +32,7 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	latLong, err := getLatLong(validPostcode) // Replace with your logic
+	latLong, err := p.Search(validPostcode) // Replace with your logic
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error fetching latitude and longitude: %v", err)
@@ -40,14 +44,7 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
-	p := ukpostcode.PostcodeList{}
-	p.Initialise()
 	http.HandleFunc("/postcode", handlePostcode)
 	fmt.Println("Server listening on port 8080")
 	http.ListenAndServe(":8080", nil)
-}
-
-func main() {
-
-	r, _ := p.Search("GL51 3xh")
 }
