@@ -18,10 +18,10 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	postcode := r.URL.Query().Get("postcode")
+	postcode := r.URL.Query().Get("p")
 	if postcode == "" {
 		w.WriteHeader(http.StatusBadRequest)
-		fmt.Fprintf(w, "Missing 'postcode' parameter")
+		fmt.Fprintf(w, "Missing 'p' parameter")
 		return
 	}
 
@@ -32,7 +32,7 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	latLong, err := p.Search(validPostcode) // Replace with your logic
+	latLong, err := p.Search(validPostcode)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error fetching latitude and longitude: %v", err)
@@ -44,6 +44,7 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 }
 
 func main() {
+	//can HandleFunc pass in reference to postcodelist
 	http.HandleFunc("/postcode", handlePostcode)
 	fmt.Println("Server listening on port 8080")
 	http.ListenAndServe(":8080", nil)
