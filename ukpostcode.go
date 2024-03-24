@@ -21,11 +21,11 @@ type Postcode struct {
 	Long float64
 }
 
-//go:embed content
+//go:embed data/content
 var content embed.FS
 
 func (p *PostcodeList) Initialise() {
-	p.data = desrializePostcode(readData("content"))
+	p.data = desrializePostcode(readData("data/content"))
 }
 
 func (p *PostcodeList) Search(postcode string) (Postcode, error) {

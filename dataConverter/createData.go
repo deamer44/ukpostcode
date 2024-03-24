@@ -60,3 +60,9 @@ func readFromCsv(postcode string) map[string][]float64 {
 
 	return postcodes
 }
+
+func check(e error) {
+	if e != nil {
+		panic(e)
+	}
+}
