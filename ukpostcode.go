@@ -28,12 +28,20 @@ func (p *PostcodeList) Initialise() {
 	p.data = desrializePostcode(readData("data/content"))
 }
 
+//returns Postcode object when searching the PostcodeList (map[string])
 func (p *PostcodeList) Search(postcode string) (Postcode, error) {
 	postcode, err := CheckPostcode(postcode)
+
 	if err != nil {
 		fmt.Printf("string %s is incorrect\n", postcode)
 		return Postcode{}, err
 	}
+
+	//check if there are 2 elements (lat/long) within the data and ensure the data exists
+	if len(p.data[postcode]) < 2 || len(p.data) == 0 {
+		return Postcode{}, errors.New("404")
+	}
+
 	return Postcode{Lat: p.data[postcode][0], Long: p.data[postcode][1]}, err
 }
 
