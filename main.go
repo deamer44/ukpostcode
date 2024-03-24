@@ -8,16 +8,18 @@ import (
 )
 
 func main() {
-	//can HandleFunc pass in reference to postcodelist
-	http.HandleFunc("/postcode", handlePostcode)
+	pl := ukpostcode.PostcodeList{}
+	pl.Initialise()
+
+	//using closure for the momeent
+	http.HandleFunc("/postcode", func(w http.ResponseWriter, r *http.Request) {
+		handlePostcode(w, r, pl)
+	})
 	fmt.Println("Server listening on port 8080")
 	http.ListenAndServe(":8080", nil)
 }
 
-func handlePostcode(w http.ResponseWriter, r *http.Request) {
-
-	p := ukpostcode.PostcodeList{}
-	p.Initialise()
+func handlePostcode(w http.ResponseWriter, r *http.Request, pl ukpostcode.PostcodeList) {
 
 	if r.Method != http.MethodGet {
 		w.WriteHeader(http.StatusMethodNotAllowed)
@@ -39,7 +41,7 @@ func handlePostcode(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	latLong, err := p.Search(validPostcode)
+	latLong, err := pl.Search(validPostcode)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintf(w, "Error fetching latitude and longitude: %v", err)

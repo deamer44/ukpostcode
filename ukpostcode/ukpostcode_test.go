@@ -13,7 +13,6 @@ func TestLookup(t *testing.T) {
 	if !compare2FloatLiterals(r, Postcode{Lat: 51.882492, Long: -2.105819}) {
 		t.Errorf("expected to get 51.882492 -2.105819, but got %f", r)
 	}
-
 }
 
 // test length
